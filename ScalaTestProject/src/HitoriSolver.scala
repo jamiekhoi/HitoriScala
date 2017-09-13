@@ -40,8 +40,6 @@ object HitoriSolver {
 
     def solvePuzzle(f:File):Unit = {
       val lines = scala.io.Source.fromFile(f).mkString.split("\n")
-      //lines.foreach(print(_))
-      //println()
       
       // Create the hitori board
       var hitoriBoard = loadBoard(lines);
@@ -137,24 +135,20 @@ object HitoriSolver {
     }
     
     def blacken(board:List[Box], box:Box):List[Box] = {
-      var newBoard = board.updated(box.index, box)
+      var newBoard = board.updated(box.index, box.changeColor("B"))
       var sides = List[Box]();
       sides = sides ::: board.filter((b:Box)=>b.x == box.x+1 && b.y == box.y)
       sides = sides ::: board.filter((b:Box)=>b.x == box.x-1 && b.y == box.y)
       sides = sides ::: board.filter((b:Box)=>b.x == box.x && b.y+1 == box.y)
       sides = sides ::: board.filter((b:Box)=>b.x == box.x && b.y-1 == box.y)
-      println("before")
       for(s<-sides){
         newBoard = whiten(newBoard, s)
       }
-      println(sides.size)
-      println()
       return newBoard
     }
     
     def whiten(board:List[Box], box:Box):List[Box] = {
-      var newBoard = board.updated(box.index, box)
-      println("white")
+      var newBoard = board.updated(box.index, box.changeColor("W"))
       return newBoard
     }
     
