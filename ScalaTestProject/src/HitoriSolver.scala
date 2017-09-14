@@ -134,8 +134,11 @@ object HitoriSolver {
       return l
     }
     
-    def blacken(board:List[Box], box:Box):List[Box] = {
+    def blacken(board:List[Box], box:Box):List[Box] = { 
       var newBoard = board.updated(box.index, box.changeColor("B"))
+      printAnswers(newBoard)
+      println()
+      newBoard = duplicateCheck(newBoard, newBoard(box.index))
       var sides = List[Box]();
       sides = sides ::: board.filter((b:Box)=>b.x == box.x+1 && b.y == box.y)
       sides = sides ::: board.filter((b:Box)=>b.x == box.x-1 && b.y == box.y)
@@ -149,6 +152,9 @@ object HitoriSolver {
     
     def whiten(board:List[Box], box:Box):List[Box] = {
       var newBoard = board.updated(box.index, box.changeColor("W"))
+      printAnswers(newBoard)
+      println()
+      newBoard = duplicateCheck(newBoard, newBoard(box.index))
       return newBoard
     }
     
@@ -210,6 +216,47 @@ object HitoriSolver {
         a = a.updated(i, a(i).changeColor("B"))
       }
       return a
+    }
+    
+    def duplicateCheck(board:List[Box], box:Box):List[Box] = {
+      
+      var newBoard = board;
+      var row = getRow(board, box.y)
+      var col = getColumn(board, box.x)
+      
+      var rowDup = row.filter((b:Box)=> b.value == box.value)
+      var colDup = col.filter((b:Box)=> b.value == box.value)
+      //println(rowDup.size)
+      
+      if(rowDup.size > 0 || colDup.size > 0){
+        println("rowdup: " + rowDup.size)
+        println("coldup: " + colDup.size)
+        //scala.io.StdIn.readLine()
+      }
+      if(box.isWhite){
+        for(b<-rowDup:::colDup){
+          if(b.choice == "G" && b.index != box.index){
+            newBoard = blacken(newBoard, b)
+          }
+        }
+      }else if(box.isBlack){
+        if(rowDup == 2){
+          for(b<-rowDup){
+            if(b.choice == "G" && b.index != box.index){
+              newBoard = whiten(newBoard, b)
+            }
+          }
+        }
+        
+        if(colDup == 2){
+          for(b<-colDup){
+            if(b.choice == "G" && b.index != box.index){
+              newBoard = whiten(newBoard, b)
+            }
+          }
+        }
+      }
+      return newBoard
     }
     
   }
